@@ -20,15 +20,15 @@ export function ProductForm() {
 
       <div className='space-y-1'>
         <div className='flex justify-between'>
-          <Label htmlFor='price-in-pence'>Price in pence</Label>
+          <Label htmlFor='priceInPence'>Price in pence</Label>
           <span className='text-muted-foreground text-sm'>
             {formatCurrency((priceInPence || 0) / 100)}
           </span>
         </div>
         <Input
           type='number'
-          id='price-in-pence'
-          name='price-in-pence'
+          id='priceInPence'
+          name='priceInPence'
           value={priceInPence}
           onChange={(e) => setPriceInPence(Number(e.target.value) || undefined)}
           required
