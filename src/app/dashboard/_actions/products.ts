@@ -21,7 +21,6 @@ const addSchema = z.object({
 export async function addProduct(prevState: unknown, formData: FormData) {
   const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
   if (result.success === false) {
-    console.log(result.error);
     return result.error.formErrors.fieldErrors;
   }
 
@@ -38,7 +37,7 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     Buffer.from(await data.image.arrayBuffer())
   );
 
-  db.product.create({
+  await db.product.create({
     data: {
       name: data.name,
       description: data.description,
