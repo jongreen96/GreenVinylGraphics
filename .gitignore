@@ -38,3 +38,6 @@ next-env.d.ts
 .vercel
 .env*.local
 .env
+
+/products
+/public/products

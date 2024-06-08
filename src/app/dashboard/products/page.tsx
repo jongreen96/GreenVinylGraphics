@@ -3,6 +3,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -18,6 +19,10 @@ import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { CheckCircle2, MoreVertical, XCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { PageHeader } from '../_components/pageHeader';
+import {
+  ActiveToggleDropdownItem,
+  DeleteDropdownItem,
+} from './_components/productActions';
 
 export default function DashboardProductsPage() {
   return (
@@ -79,7 +84,7 @@ async function ProductsTable() {
                 </>
               ) : (
                 <>
-                  <XCircleIcon />
+                  <XCircleIcon className='stroke-destructive' />
                   <span className='sr-only'>Not available for purchase</span>
                 </>
               )}
@@ -89,7 +94,7 @@ async function ProductsTable() {
             <TableCell>{formatCurrency(product.priceInPence / 100)}</TableCell>
             <TableCell>{formatNumber(product._count.orders)}</TableCell>
 
-            <TableCell>
+            <TableCell className='flex'>
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <MoreVertical />
@@ -111,6 +116,18 @@ async function ProductsTable() {
                       Edit
                     </Link>
                   </DropdownMenuItem>
+
+                  <ActiveToggleDropdownItem
+                    id={product.id}
+                    isAvailableForPurchase={product.isAvailableForPurchase}
+                  />
+
+                  <DropdownMenuSeparator />
+
+                  <DeleteDropdownItem
+                    id={product.id}
+                    disabled={product._count.orders > 0}
+                  />
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
