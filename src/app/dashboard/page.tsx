@@ -8,6 +8,7 @@ import {
 import db from '@/db/db';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -63,25 +64,33 @@ export default async function Dashboard() {
 
   return (
     <main className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-      <DashboardCard
-        title='Sales'
-        subtitle={`${formatNumber(salesData.numberOfSales)} Orders`}
-        body={formatCurrency(salesData.amount)}
-      />
-      <DashboardCard
-        title='Customers'
-        subtitle={`${formatCurrency(
-          userData.averageValuePerUser
-        )} Average customer revenue`}
-        body={formatNumber(userData.userCount)}
-      />
-      <DashboardCard
-        title='Active Products'
-        subtitle={`${formatNumber(
-          productData.inactiveCount
-        )} Inactive products`}
-        body={formatNumber(productData.activeCount)}
-      />
+      <Link href='/dashboard/orders'>
+        <DashboardCard
+          title='Sales'
+          subtitle={`${formatNumber(salesData.numberOfSales)} Orders`}
+          body={formatCurrency(salesData.amount)}
+        />
+      </Link>
+
+      <Link href='/dashboard/users'>
+        <DashboardCard
+          title='Customers'
+          subtitle={`${formatCurrency(
+            userData.averageValuePerUser
+          )} Average customer revenue`}
+          body={formatNumber(userData.userCount)}
+        />
+      </Link>
+
+      <Link href='/dashboard/products'>
+        <DashboardCard
+          title='Active Products'
+          subtitle={`${formatNumber(
+            productData.inactiveCount
+          )} Inactive products`}
+          body={formatNumber(productData.activeCount)}
+        />
+      </Link>
     </main>
   );
 }
