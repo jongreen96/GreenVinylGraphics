@@ -1,8 +1,10 @@
 import db from '@/db/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const resend = new Resend(process.env.RESEND_API_KEY as string);
 
 export async function POST(req: NextRequest) {
   const event = stripe.webhooks.constructEvent(
@@ -53,5 +55,13 @@ export async function POST(req: NextRequest) {
         ),
       },
     });
+
+    await resend.emails.send({
+      from: `Support <${process.env.RESEND_FROM_EMAIL}>`,
+      to: email,
+      subject: `Order Confirmation for ${product.name}`,
+      html: `Download link: ${process.env.NEXT_PUBLIC_SERVER_URL}/products/download/${downloadVerification.id}`,
+    });
   }
+  return new NextResponse();
 }
