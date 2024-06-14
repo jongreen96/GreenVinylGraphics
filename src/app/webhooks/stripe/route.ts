@@ -1,4 +1,5 @@
 import db from '@/db/db';
+import PurchaseReceipt from '@/email/purchaseReceipt';
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import Stripe from 'stripe';
@@ -59,8 +60,12 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: `Support <${process.env.RESEND_FROM_EMAIL}>`,
       to: email,
-      subject: `Order Confirmation for ${product.name}`,
-      html: `Download link: ${process.env.NEXT_PUBLIC_SERVER_URL}/products/download/${downloadVerification.id}`,
+      subject: 'Order Confirmation',
+      react: PurchaseReceipt({
+        product,
+        order,
+        downloadVerificationId: downloadVerification.id,
+      }),
     });
   }
   return new NextResponse();
