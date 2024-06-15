@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     });
 
     await resend.emails.send({
-      from: `Support <${process.env.RESEND_FROM_EMAIL}>`,
+      from: `Green Vinyl Graphics <${process.env.RESEND_FROM_EMAIL}>`,
       to: email,
       subject: 'Order Confirmation',
       react: PurchaseReceipt({
