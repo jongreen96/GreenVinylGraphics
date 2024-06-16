@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import db from '@/db/db';
+import { createDownloadVerificationId, getProduct } from '@/db/queries';
 import { formatCurrency } from '@/lib/formatters';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,10 +19,8 @@ export default async function SuccessPage({
 
   if (paymentIntent.metadata.product_id === null) return notFound();
 
-  const product = await db.product.findUnique({
-    where: { id: paymentIntent.metadata.product_id },
-  });
-  if (product === null) return notFound();
+  const product = await getProduct(paymentIntent.metadata.product_id);
+  if (product == null) return notFound();
 
   const isSuccess = paymentIntent.status === 'succeeded';
 
@@ -65,15 +63,4 @@ export default async function SuccessPage({
       </div>
     </div>
   );
-}
-
-async function createDownloadVerificationId(productId: string) {
-  return (
-    await db.downloadVerification.create({
-      data: {
-        productId,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-      },
-    })
-  ).id;
 }

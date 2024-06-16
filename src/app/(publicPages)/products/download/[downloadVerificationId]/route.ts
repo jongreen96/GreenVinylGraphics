@@ -1,4 +1,4 @@
-import db from '@/db/db';
+import { getDownloadVerificationId } from '@/db/queries';
 import fs from 'fs/promises';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -8,12 +8,8 @@ export async function GET(
     params: { downloadVerificationId },
   }: { params: { downloadVerificationId: string } }
 ) {
-  const data = await db.downloadVerification.findUnique({
-    where: { id: downloadVerificationId, expiresAt: { gt: new Date() } },
-    select: { product: { select: { name: true, filePath: true } } },
-  });
-
-  if (data === null)
+  const data = await getDownloadVerificationId(downloadVerificationId);
+  if (data == null)
     return NextResponse.redirect(
       new URL('/products/download/expired', req.url)
     );

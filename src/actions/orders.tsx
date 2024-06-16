@@ -1,6 +1,9 @@
 'use server';
 
-import db from '@/db/db';
+import {
+  createDownloadVerificationId,
+  getEmailOrderHistory,
+} from '@/db/queries';
 import OrderHistory from '@/email/orderHistory';
 import { Resend } from 'resend';
 import { z } from 'zod';
@@ -13,34 +16,10 @@ export async function EmailOrderHistory(
   formData: FormData
 ): Promise<{ message?: string; error?: string }> {
   const result = emailSchema.safeParse(formData.get('email'));
+  if (result.success === false) return { error: 'Invalid email' };
 
-  if (result.success === false) {
-    return { error: 'Invalid email' };
-  }
-
-  const user = await db.user.findUnique({
-    where: { email: result.data },
-    select: {
-      email: true,
-      orders: {
-        select: {
-          pricePaidInPence: true,
-          id: true,
-          createdAt: true,
-          product: {
-            select: {
-              id: true,
-              name: true,
-              imagePath: true,
-              description: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  if (user === null)
+  const user = await getEmailOrderHistory(result.data);
+  if (user == null)
     return {
       message:
         'Check your email to view your order history and download links.',
@@ -49,14 +28,9 @@ export async function EmailOrderHistory(
   const orders = user.orders.map(async (order) => {
     return {
       ...order,
-      downloadVerificationId: (
-        await db.downloadVerification.create({
-          data: {
-            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-            productId: order.product.id,
-          },
-        })
-      ).id,
+      downloadVerificationId: await createDownloadVerificationId(
+        order.product.id
+      ),
     };
   });
 

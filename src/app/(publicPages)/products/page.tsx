@@ -1,14 +1,9 @@
 import { ProductCard, ProductCardSkeleton } from '@/components/productCard';
-import db from '@/db/db';
+import { getAllProducts } from '@/db/queries';
 import { cache } from '@/lib/cache';
 import { Suspense } from 'react';
 
-const getProducts = cache(() => {
-  return db.product.findMany({
-    where: { isAvailableForPurchase: true },
-    orderBy: { createdAt: 'desc' },
-  });
-}, ['/products', 'getProducts']);
+const getProducts = cache(() => getAllProducts(), ['/products', 'getProducts']);
 
 export default function ProductsPage() {
   return (

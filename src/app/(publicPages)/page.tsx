@@ -1,32 +1,20 @@
 import { ProductCard, ProductCardSkeleton } from '@/components/productCard';
 import { Button } from '@/components/ui/button';
-import db from '@/db/db';
+import { getAllProducts, getMostPopularProducts } from '@/db/queries';
+import { Product } from '@/db/schema';
 import { cache } from '@/lib/cache';
-import { Product } from '@prisma/client';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
 const getNewestProducts = cache(
-  () => {
-    return db.product.findMany({
-      where: { isAvailableForPurchase: true },
-      orderBy: { createdAt: 'desc' },
-      take: 8,
-    });
-  },
+  () => getAllProducts(8),
   ['/', 'getNewestProducts'],
   { revalidate: 60 * 60 * 24 }
 );
 
-const getMostPopularProducts = cache(
-  () => {
-    return db.product.findMany({
-      where: { isAvailableForPurchase: true },
-      orderBy: { orders: { _count: 'desc' } },
-      take: 8,
-    });
-  },
+const getMostPopularProduct = cache(
+  () => getMostPopularProducts(8),
   ['/', 'getMostPopularProducts'],
   { revalidate: 60 * 60 * 24 }
 );
@@ -39,7 +27,7 @@ export default function HomePage() {
         title='Newest Products'
       />
       <ProductGridSection
-        productFetcher={getMostPopularProducts}
+        productFetcher={getMostPopularProduct}
         title='Most Popular'
       />
     </main>

@@ -1,4 +1,4 @@
-import db from '@/db/db';
+import { getProduct } from '@/db/queries';
 import { notFound } from 'next/navigation';
 import Stripe from 'stripe';
 import CheckoutForm from './_components/checkoutForm';
@@ -10,8 +10,8 @@ export default async function PurchasePage({
 }: {
   params: { id: string };
 }) {
-  const product = await db.product.findUnique({ where: { id } });
-  if (product === null) return notFound();
+  const product = await getProduct(id);
+  if (product == null) return notFound();
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: product.priceInPence,

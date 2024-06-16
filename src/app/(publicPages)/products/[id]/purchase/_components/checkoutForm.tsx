@@ -11,8 +11,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import type { Product } from '@/db/schema';
 import { formatCurrency } from '@/lib/formatters';
-import { Product } from '@prisma/client';
 import {
   Elements,
   LinkAuthenticationElement,
