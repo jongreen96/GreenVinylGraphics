@@ -1,6 +1,12 @@
 'use server';
 
-import db from '@/db/db';
+import {
+  createProduct,
+  deleteProduct,
+  getProduct,
+  updateProduct,
+  updateProductAvailability,
+} from '@/db/queries';
 import fs from 'fs/promises';
 import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
@@ -38,16 +44,13 @@ export async function addProduct(prevState: unknown, formData: FormData) {
     Buffer.from(await data.image.arrayBuffer())
   );
 
-  await db.product.create({
-    data: {
-      name: data.name,
-      description: data.description,
-      priceInPence: data.priceInPence,
-      imagePath,
-      filePath,
-      isAvailableForPurchase: false,
-    },
-  });
+  await createProduct(
+    data.name,
+    data.description,
+    data.priceInPence,
+    imagePath,
+    filePath
+  );
 
   revalidatePath('/');
   revalidatePath('/products');
@@ -59,7 +62,7 @@ const updateSchema = addSchema.extend({
   image: imageSchema.optional(),
 });
 
-export async function updateProduct(
+export async function updateProductAction(
   id: string,
   prevState: unknown,
   formData: FormData
@@ -70,8 +73,8 @@ export async function updateProduct(
   }
 
   const data = result.data;
-  const product = await db.product.findUnique({ where: { id } });
-  if (product === null) return notFound();
+  const product = await getProduct(id);
+  if (product == null) return notFound();
 
   let filePath = product.filePath;
   if (data.file !== undefined && data.file.size > 0) {
@@ -90,16 +93,14 @@ export async function updateProduct(
     );
   }
 
-  await db.product.update({
-    where: { id },
-    data: {
-      name: data.name,
-      description: data.description,
-      priceInPence: data.priceInPence,
-      imagePath,
-      filePath,
-    },
-  });
+  await updateProduct(
+    id,
+    data.name,
+    data.description,
+    data.priceInPence,
+    imagePath,
+    filePath
+  );
 
   revalidatePath('/');
   revalidatePath('/products');
@@ -110,21 +111,18 @@ export async function toggleProductAvailability(
   id: string,
   isAvailableForPurchase: boolean
 ) {
-  await db.product.update({
-    where: { id },
-    data: { isAvailableForPurchase },
-  });
+  await updateProductAvailability(id, isAvailableForPurchase);
 
   revalidatePath('/');
   revalidatePath('/products');
 }
 
-export async function deleteProduct(id: string) {
-  const product = await db.product.delete({ where: { id } });
-  if (product === null) return notFound();
+export async function deleteProductAction(id: string) {
+  const product = await deleteProduct(id);
+  if (product == null) return notFound();
 
-  await fs.unlink(product.filePath);
-  await fs.unlink(`public/${product.imagePath}`);
+  await fs.unlink(product[0].filePath);
+  await fs.unlink(`public/${product[0].imagePath}`);
 
   revalidatePath('/');
   revalidatePath('/products');

@@ -1,4 +1,8 @@
-import db from '@/db/db';
+import {
+  createDownloadVerificationId,
+  createOrder,
+  getProduct,
+} from '@/db/queries';
 import PurchaseReceipt from '@/email/purchaseReceipt';
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
@@ -20,42 +24,14 @@ export async function POST(req: NextRequest) {
     const email = charge.billing_details.email;
     const pricePaidInPence = charge.amount;
 
-    const product = await db.product.findFirst({
-      where: { id: productId },
-    });
+    const product = await getProduct(productId);
 
-    if (product === null || email === null)
+    if (product == null || email == null)
       return new NextResponse('Product not found', { status: 404 });
 
-    const userFields = {
-      email,
-      orders: {
-        create: { productId, pricePaidInPence },
-      },
-    };
+    const order = await createOrder(email, productId, pricePaidInPence);
 
-    const {
-      orders: [order],
-    } = await db.user.upsert({
-      where: { email },
-      create: userFields,
-      update: userFields,
-      select: {
-        orders: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
-      },
-    });
-
-    const downloadVerification = await db.downloadVerification.create({
-      data: {
-        productId,
-        expiresAt: new Date(
-          order.createdAt.getTime() + 1000 * 60 * 60 * 24 * 7
-        ),
-      },
-    });
+    const downloadVerification = await createDownloadVerificationId(productId);
 
     await resend.emails.send({
       from: `Green Vinyl Graphics <${process.env.RESEND_FROM_EMAIL}>`,
@@ -64,7 +40,7 @@ export async function POST(req: NextRequest) {
       react: PurchaseReceipt({
         product,
         order,
-        downloadVerificationId: downloadVerification.id,
+        downloadVerificationId: downloadVerification,
       }),
     });
   }

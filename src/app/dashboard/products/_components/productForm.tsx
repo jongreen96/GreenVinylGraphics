@@ -4,15 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Product } from '@/db/schema';
 import { formatCurrency } from '@/lib/formatters';
-import { Product } from '@prisma/client';
 import { useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
-import { addProduct, updateProduct } from '../../_actions/products';
+import { addProduct, updateProductAction } from '../../_actions/products';
 
 export function ProductForm({ product }: { product?: Product | null }) {
   const [error, action] = useFormState(
-    product == null ? addProduct : updateProduct.bind(null, product.id),
+    product == null ? addProduct : updateProductAction.bind(null, product.id),
     {}
   );
   const [priceInPence, setPriceInPence] = useState<number | undefined>(

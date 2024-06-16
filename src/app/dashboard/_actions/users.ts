@@ -1,11 +1,11 @@
 'use server';
 
-import db from '@/db/db';
+import { deleteUser } from '@/db/queries';
 import { notFound } from 'next/navigation';
 
-export async function deleteUser(id: string) {
-  const user = await db.user.delete({ where: { id } });
-  if (user === null) return notFound();
+export async function deleteUserAction(id: string) {
+  const user = await deleteUser(id);
+  if (user == null) return notFound();
 
   return user;
 }

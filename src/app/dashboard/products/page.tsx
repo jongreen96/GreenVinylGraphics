@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import db from '@/db/db';
+import { getProductsForDashboard } from '@/db/queries';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { CheckCircle2, MoreVertical, XCircleIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -40,18 +40,9 @@ export default function DashboardProductsPage() {
 }
 
 async function ProductsTable() {
-  const products = await db.product.findMany({
-    select: {
-      id: true,
-      name: true,
-      priceInPence: true,
-      isAvailableForPurchase: true,
-      _count: { select: { orders: true } },
-    },
-    orderBy: { name: 'asc' },
-  });
+  const products = await getProductsForDashboard();
 
-  if (products.length === 0) {
+  if (products.length == 0) {
     return <p>No products found</p>;
   }
 
@@ -92,7 +83,7 @@ async function ProductsTable() {
 
             <TableCell>{product.name}</TableCell>
             <TableCell>{formatCurrency(product.priceInPence / 100)}</TableCell>
-            <TableCell>{formatNumber(product._count.orders)}</TableCell>
+            <TableCell>{formatNumber(product._count)}</TableCell>
 
             <TableCell className='flex'>
               <DropdownMenu>
@@ -126,7 +117,7 @@ async function ProductsTable() {
 
                   <DeleteDropdownItem
                     id={product.id}
-                    disabled={product._count.orders > 0}
+                    disabled={product._count > 0}
                   />
                 </DropdownMenuContent>
               </DropdownMenu>

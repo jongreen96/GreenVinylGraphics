@@ -11,24 +11,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import db from '@/db/db';
+import { getUsersForDashboard } from '@/db/queries';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { MoreVertical } from 'lucide-react';
 import { PageHeader } from '../_components/pageHeader';
 import { DeleteDropdownItem } from './_components/userActions';
-
-function getUsers() {
-  return db.user.findMany({
-    select: {
-      id: true,
-      email: true,
-      orders: {
-        select: { pricePaidInPence: true },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-}
 
 export default function UsersPage() {
   return (
@@ -40,7 +27,7 @@ export default function UsersPage() {
 }
 
 async function UserTable() {
-  const users = await getUsers();
+  const users = await getUsersForDashboard();
   if (users.length === 0) return <p>No users found</p>;
 
   return (

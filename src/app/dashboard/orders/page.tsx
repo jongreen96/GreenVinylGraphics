@@ -11,27 +11,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import db from '@/db/db';
+import { getOrders } from '@/db/queries';
 import { formatCurrency } from '@/lib/formatters';
 import { MoreVertical } from 'lucide-react';
 import { PageHeader } from '../_components/pageHeader';
 import { DeleteDropDownItem } from './_components/orderActions';
-
-function getOrders() {
-  return db.order.findMany({
-    select: {
-      id: true,
-      pricePaidInPence: true,
-      product: {
-        select: { name: true },
-      },
-      user: {
-        select: { email: true },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-}
 
 export default function OrdersPage() {
   return (

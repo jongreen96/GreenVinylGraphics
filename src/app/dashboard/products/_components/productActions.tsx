@@ -4,7 +4,7 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import {
-  deleteProduct,
+  deleteProductAction,
   toggleProductAvailability,
 } from '../../_actions/products';
 
@@ -49,7 +49,7 @@ export function DeleteDropdownItem({
       variant='destructive'
       disabled={disabled || isPending}
       onClick={() => {
-        startTransition(async () => await deleteProduct(id));
+        startTransition(async () => await deleteProductAction(id));
         router.refresh();
       }}
     >

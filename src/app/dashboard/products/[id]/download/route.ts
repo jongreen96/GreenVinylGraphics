@@ -1,4 +1,4 @@
-import db from '@/db/db';
+import { getProduct } from '@/db/queries';
 import fs from 'fs/promises';
 import { notFound } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
@@ -7,12 +7,9 @@ export async function GET(
   req: NextRequest,
   { params: { id } }: { params: { id: string } }
 ) {
-  const product = await db.product.findUnique({
-    where: { id },
-    select: { filePath: true, name: true },
-  });
+  const product = await getProduct(id);
 
-  if (product === null) return notFound();
+  if (product == null) return notFound();
 
   const { size } = await fs.stat(product.filePath);
   const file = await fs.readFile(product.filePath);

@@ -1,13 +1,7 @@
 'use server';
 
+import { checkOrderExists } from '@/db/queries';
+
 export async function userOrderExists(email: string, productId: string) {
-  return (
-    (await db.order.findFirst({
-      where: {
-        user: { email },
-        productId,
-      },
-      select: { id: true },
-    })) != null
-  );
+  return await checkOrderExists(email, productId);
 }

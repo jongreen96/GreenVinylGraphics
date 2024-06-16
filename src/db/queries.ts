@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gt } from 'drizzle-orm';
+import { and, asc, avg, count, desc, eq, gt, sum } from 'drizzle-orm';
 import { db } from './db';
 import { downloadVerification, order, product, user } from './schema';
 
@@ -22,6 +22,23 @@ export async function getAllProducts(limit = 9999) {
   return returnedProducts;
 }
 
+export async function getProductsForDashboard() {
+  const returnedProducts = await db
+    .select({
+      id: product.id,
+      name: product.name,
+      priceInPence: product.priceInPence,
+      isAvailableForPurchase: product.isAvailableForPurchase,
+      _count: count(order.productId),
+    })
+    .from(product)
+    .leftJoin(order, eq(product.id, order.productId))
+    .groupBy(product.id)
+    .orderBy(asc(product.name));
+
+  return returnedProducts;
+}
+
 export async function getMostPopularProducts(limit = 9999) {
   const returnedProducts = await db.query.product.findMany({
     where: eq(product.isAvailableForPurchase, true),
@@ -32,14 +49,216 @@ export async function getMostPopularProducts(limit = 9999) {
   return returnedProducts;
 }
 
+export async function createProduct(
+  name: string,
+  description: string,
+  priceInPence: number,
+  imagePath: string,
+  filePath: string
+) {
+  await db.insert(product).values({
+    name,
+    description,
+    priceInPence,
+    imagePath,
+    filePath,
+    isAvailableForPurchase: false,
+  });
+}
+
+export async function updateProduct(
+  productId: string,
+  name: string,
+  description: string,
+  priceInPence: number,
+  imagePath: string,
+  filePath: string
+) {
+  await db
+    .update(product)
+    .set({ name, description, priceInPence, imagePath, filePath })
+    .where(eq(product.id, productId));
+}
+
+export async function updateProductAvailability(
+  productId: string,
+  isAvailableForPurchase: boolean
+) {
+  await db
+    .update(product)
+    .set({ isAvailableForPurchase })
+    .where(eq(product.id, productId));
+}
+
+export async function deleteProduct(id: string) {
+  const returnedProduct = await db
+    .delete(product)
+    .where(eq(product.id, id))
+    .returning({
+      filePath: product.filePath,
+      imagePath: product.imagePath,
+    });
+
+  return returnedProduct;
+}
+
+// USERS
+
+export async function getUsersForDashboard() {
+  const returnedUsers = await db.query.user.findMany({
+    columns: {
+      id: true,
+      email: true,
+    },
+    with: {
+      orders: {
+        columns: {
+          pricePaidInPence: true,
+        },
+      },
+    },
+    orderBy: [desc(user.createdAt)],
+  });
+
+  return returnedUsers;
+}
+
+export async function deleteUser(id: string) {
+  const returnedUser = await db.delete(user).where(eq(user.id, id)).returning({
+    id: user.id,
+  });
+
+  return returnedUser;
+}
+
 // ORDERS
+
+export async function createOrder(
+  email: string,
+  productId: string,
+  pricePaidInPence: number
+) {
+  const returnedUserId = await db
+    .insert(user)
+    .values({
+      email,
+    })
+    .onConflictDoNothing()
+    .returning({
+      id: user.id,
+    });
+
+  const returnedOrder = await db
+    .insert(order)
+    .values({
+      productId,
+      pricePaidInPence,
+      userId: returnedUserId[0].id,
+    })
+    .returning({
+      id: order.id,
+      pricePaidInPence: order.pricePaidInPence,
+      createdAt: order.createdAt,
+    });
+
+  return returnedOrder[0];
+}
+
+export async function getOrders() {
+  const returnedOrders = await db.query.order.findMany({
+    columns: {
+      id: true,
+      pricePaidInPence: true,
+    },
+    with: {
+      product: {
+        columns: {
+          name: true,
+        },
+      },
+      user: {
+        columns: {
+          email: true,
+        },
+      },
+    },
+    orderBy: [desc(order.createdAt)],
+  });
+
+  return returnedOrders;
+}
 
 export async function checkOrderExists(email: string, productId: string) {
   return (
     (await db.query.order.findFirst({
-      // TBC
+      where: and(eq(order.productId, productId), eq(user.email, email)), // Unsure about this
+      columns: {
+        id: true,
+      },
     })) != null
   );
+}
+
+export async function deleteOrder(id: string) {
+  const returnedOrder = await db
+    .delete(order)
+    .where(eq(order.id, id))
+    .returning({
+      deletedId: order.id,
+    });
+
+  return returnedOrder;
+}
+
+// DASHBOARD
+
+export async function getSalesData() {
+  const returnedData = await db
+    .select({
+      total: sum(order.pricePaidInPence),
+      numberOfSales: count(order.id),
+    })
+    .from(order);
+
+  return {
+    amount: Number(returnedData[0].total) / 100, //Dislike this completely but we'll see
+    numberOfSales: returnedData[0].numberOfSales,
+  };
+}
+
+export async function getUserData() {
+  const returnedData = await db
+    .select({
+      userCount: count(user.id),
+      averageValuePerUser: avg(order.pricePaidInPence),
+    })
+    .from(user)
+    .leftJoin(order, eq(user.id, order.userId));
+
+  return {
+    userCount: Number(returnedData[0].userCount),
+    averageValuePerUser:
+      returnedData[0].userCount === 0
+        ? 0
+        : Number(returnedData[0].averageValuePerUser) / 100,
+  };
+}
+
+export async function getProductData() {
+  const activeCount = await db
+    .select({ activeCount: count(product.id) })
+    .from(product)
+    .where(eq(product.isAvailableForPurchase, true));
+
+  const inactiveCount = await db
+    .select({ inactiveCount: count(product.id) })
+    .from(product)
+    .where(eq(product.isAvailableForPurchase, false));
+
+  return {
+    activeCount: Number(activeCount[0].activeCount),
+    inactiveCount: Number(inactiveCount[0].inactiveCount),
+  };
 }
 
 // EMAILS
