@@ -40,11 +40,23 @@ export async function getProductsForDashboard() {
 }
 
 export async function getMostPopularProducts(limit = 9999) {
-  const returnedProducts = await db.query.product.findMany({
-    where: eq(product.isAvailableForPurchase, true),
-    orderBy: [desc(count(order.id))], // Will be MASSIVELY impresses if this works
-    limit,
-  });
+  const returnedProducts = await db
+    .select({
+      id: product.id,
+      name: product.name,
+      priceInPence: product.priceInPence,
+      filePath: product.filePath,
+      imagePath: product.imagePath,
+      description: product.description,
+      isAvailableForPurchase: product.isAvailableForPurchase,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+    })
+    .from(product)
+    .leftJoin(order, eq(product.id, order.productId))
+    .groupBy(product.id)
+    .orderBy(desc(count(order.id)))
+    .limit(limit);
 
   return returnedProducts;
 }
@@ -143,7 +155,7 @@ export async function createOrder(
     .values({
       email,
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({ target: user.email, set: { email } })
     .returning({
       id: user.id,
     });
@@ -189,14 +201,13 @@ export async function getOrders() {
 }
 
 export async function checkOrderExists(email: string, productId: string) {
-  return (
-    (await db.query.order.findFirst({
-      where: and(eq(order.productId, productId), eq(user.email, email)), // Unsure about this
-      columns: {
-        id: true,
-      },
-    })) != null
-  );
+  const repsonse = await db
+    .select({ id: order.id })
+    .from(order)
+    .leftJoin(user, eq(order.userId, user.id))
+    .where(and(eq(order.productId, productId), eq(user.email, email)));
+
+  return repsonse == null;
 }
 
 export async function deleteOrder(id: string) {
@@ -227,20 +238,19 @@ export async function getSalesData() {
 }
 
 export async function getUserData() {
-  const returnedData = await db
+  const userCount = await db.select({ userCount: count(user.id) }).from(user);
+  const averageValuePerUser = await db
     .select({
-      userCount: count(user.id),
       averageValuePerUser: avg(order.pricePaidInPence),
     })
-    .from(user)
-    .leftJoin(order, eq(user.id, order.userId));
+    .from(order);
 
   return {
-    userCount: Number(returnedData[0].userCount),
+    userCount: userCount[0].userCount,
     averageValuePerUser:
-      returnedData[0].userCount === 0
+      userCount[0].userCount === 0
         ? 0
-        : Number(returnedData[0].averageValuePerUser) / 100,
+        : Number(averageValuePerUser[0].averageValuePerUser) / 100,
   };
 }
 
