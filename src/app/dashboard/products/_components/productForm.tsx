@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@/db/schema';
 import { formatCurrency } from '@/lib/formatters';
+import { UploadDropzone } from '@/lib/utils';
 import { useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { addProduct, updateProductAction } from '../../_actions/products';
@@ -17,6 +18,12 @@ export function ProductForm({ product }: { product?: Product | null }) {
   );
   const [priceInPence, setPriceInPence] = useState<number | undefined>(
     product?.priceInPence
+  );
+  const [imagePath, setImagePath] = useState<string | undefined>(
+    product?.imagePath
+  );
+  const [filePath, setFilePath] = useState<string | undefined>(
+    product?.filePath
   );
 
   return (
@@ -71,14 +78,15 @@ export function ProductForm({ product }: { product?: Product | null }) {
         <div className='flex justify-between'>
           <Label htmlFor='image'>Image</Label>
           <p className='text-xs text-muted-foreground'>
-            {product != null && product.imagePath.split('/').pop()}
+            {imagePath != null && imagePath}
           </p>
         </div>
-        <Input
-          type='file'
-          id='image'
-          name='image'
-          required={product === null}
+        <input type='hidden' id='image' name='image' value={imagePath} />
+        <UploadDropzone
+          endpoint='imageUploader'
+          onClientUploadComplete={(res) => {
+            setImagePath(res[0].url);
+          }}
         />
         {error.image && (
           <p className='text-sm text-destructive'>{error.image}</p>
@@ -89,10 +97,16 @@ export function ProductForm({ product }: { product?: Product | null }) {
         <div className='flex justify-between'>
           <Label htmlFor='file'>File</Label>
           <p className='text-xs text-muted-foreground'>
-            {product != null && product.filePath.split('/').pop()}
+            {filePath != null && filePath}
           </p>
         </div>
-        <Input type='file' id='file' name='file' required={product === null} />
+        <input type='hidden' id='file' name='file' value={filePath} />
+        <UploadDropzone
+          endpoint='fileUploader'
+          onClientUploadComplete={(res) => {
+            setFilePath(res[0].url);
+          }}
+        />
         {error.file && <p className='text-sm text-destructive'>{error.file}</p>}
       </div>
 
