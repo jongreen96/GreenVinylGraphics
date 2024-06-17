@@ -22,23 +22,6 @@ export async function getAllProducts(limit = 9999) {
   return returnedProducts;
 }
 
-export async function getProductsForDashboard() {
-  const returnedProducts = await db
-    .select({
-      id: product.id,
-      name: product.name,
-      priceInPence: product.priceInPence,
-      isAvailableForPurchase: product.isAvailableForPurchase,
-      _count: count(order.productId),
-    })
-    .from(product)
-    .leftJoin(order, eq(product.id, order.productId))
-    .groupBy(product.id)
-    .orderBy(asc(product.name));
-
-  return returnedProducts;
-}
-
 export async function getMostPopularProducts(limit = 9999) {
   const returnedProducts = await db
     .select({
@@ -53,6 +36,7 @@ export async function getMostPopularProducts(limit = 9999) {
       updatedAt: product.updatedAt,
     })
     .from(product)
+    .where(eq(product.isAvailableForPurchase, true))
     .leftJoin(order, eq(product.id, order.productId))
     .groupBy(product.id)
     .orderBy(desc(count(order.id)))
@@ -269,6 +253,23 @@ export async function getProductData() {
     activeCount: Number(activeCount[0].activeCount),
     inactiveCount: Number(inactiveCount[0].inactiveCount),
   };
+}
+
+export async function getProductsForDashboard() {
+  const returnedProducts = await db
+    .select({
+      id: product.id,
+      name: product.name,
+      priceInPence: product.priceInPence,
+      isAvailableForPurchase: product.isAvailableForPurchase,
+      _count: count(order.productId),
+    })
+    .from(product)
+    .leftJoin(order, eq(product.id, order.productId))
+    .groupBy(product.id)
+    .orderBy(asc(product.name));
+
+  return returnedProducts;
 }
 
 // EMAILS
