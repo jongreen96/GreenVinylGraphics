@@ -55,6 +55,18 @@ export async function updateProductAction(
   const product = await getProduct(id);
   if (product == null) return notFound();
 
+  if (data.image !== product.imagePath || data.file !== product.filePath) {
+    const utapi = new UTApi();
+
+    if (data.image !== product.imagePath)
+      // @ts-expect-error
+      await utapi.deleteFiles([product.imagePath.split('/').pop()]);
+
+    if (data.file !== product.filePath)
+      // @ts-expect-error
+      await utapi.deleteFiles([product.filePath.split('/').pop()]);
+  }
+
   await updateProduct(
     id,
     data.name,
