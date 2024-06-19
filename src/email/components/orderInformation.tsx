@@ -59,11 +59,7 @@ export function OrderInformation({
       </Section>
 
       <Section className='border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4'>
-        <Img
-          width='100%'
-          alt={product.name}
-          src={`${process.env.NEXT_PUBLIC_SERVER_URL}${product.imagePath}`}
-        />
+        <Img width='100%' alt={product.name} src={product.imagePath} />
         <Row className='mt-8'>
           <Column className='align-bottom'>
             <Text className='text-lg font-semibold tracking-tight m-0 mr-4'>
