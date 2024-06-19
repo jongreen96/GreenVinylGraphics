@@ -191,7 +191,7 @@ export async function checkOrderExists(email: string, productId: string) {
     .leftJoin(user, eq(order.userId, user.id))
     .where(and(eq(order.productId, productId), eq(user.email, email)));
 
-  return repsonse == null;
+  return repsonse.length > 0;
 }
 
 export async function deleteOrder(id: string) {
