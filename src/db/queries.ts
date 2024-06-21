@@ -113,10 +113,21 @@ export async function getUsersForDashboard() {
         },
       },
     },
-    orderBy: [desc(user.createdAt)],
   });
 
-  return returnedUsers;
+  const sortedUsers = returnedUsers.sort((a, b) => {
+    const totalValueA = a.orders.reduce(
+      (sum, o) => o.pricePaidInPence + sum,
+      0
+    );
+    const totalValueB = b.orders.reduce(
+      (sum, o) => o.pricePaidInPence + sum,
+      0
+    );
+    return totalValueB - totalValueA;
+  });
+
+  return sortedUsers;
 }
 
 export async function deleteUser(id: string) {
