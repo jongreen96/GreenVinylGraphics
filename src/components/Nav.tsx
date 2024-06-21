@@ -9,7 +9,7 @@ import { Button } from './ui/button';
 export default function Nav({ children }: { children: React.ReactNode }) {
   return (
     <nav className='font-semibold z-50 bg-secondary sticky top-0 tracking-tight shadow-lg'>
-      <div className='container flex justify-between'>
+      <div className='container px-4 flex justify-between'>
         <div className='flex items-center gap-4'>
           <Link href='/' className='tracking-tighter py-2 text-2xl font-bold '>
             <p className='hidden sm:block'>Green Vinyl Graphics</p>

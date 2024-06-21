@@ -31,9 +31,9 @@ export function ProductCard({
         <Image src={imagePath} fill alt={name} className='object-cover' />
       </div>
 
-      <CardHeader>
+      <CardHeader className='p-2'>
         <CardTitle>
-          <div className='flex justify-between w-full'>
+          <div className='flex justify-between w-full gap-2'>
             <span>{name}</span>
             <span className='font-normal'>
               {formatCurrency(priceInPence / 100)}
@@ -46,7 +46,7 @@ export function ProductCard({
         </CardDescription>
       </CardHeader>
 
-      <CardFooter className='mt-auto'>
+      <CardFooter className='mt-auto p-2'>
         <Button asChild className='w-full'>
           <Link href={`/products/${id}/purchase`}>Purchase</Link>
         </Button>
