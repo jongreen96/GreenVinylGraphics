@@ -2,7 +2,12 @@ import { PageHeader } from '@/app/dashboard/_components/pageHeader';
 import { ProductCard, ProductCardSkeleton } from '@/components/productCard';
 import { getAllProducts } from '@/db/queries';
 import { cache } from '@/lib/cache';
+import { Metadata } from 'next';
 import { Suspense } from 'react';
+
+export const metadata: Metadata = {
+  title: 'Products',
+};
 
 const getProducts = cache(() => getAllProducts(), ['/products', 'getProducts']);
 
