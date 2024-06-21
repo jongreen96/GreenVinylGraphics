@@ -8,13 +8,13 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 const getNewestProducts = cache(
-  () => getAllProducts(8),
+  () => getAllProducts(10),
   ['/', 'getNewestProducts'],
   { revalidate: 60 * 60 * 24 }
 );
 
 const getMostPopularProduct = cache(
-  () => getMostPopularProducts(8),
+  () => getMostPopularProducts(10),
   ['/', 'getMostPopularProducts'],
   { revalidate: 60 * 60 * 24 }
 );
@@ -59,7 +59,7 @@ function ProductGridSection({
         <Suspense
           fallback={
             <>
-              {[...Array(8)].map((_, index) => (
+              {[...Array(10)].map((_, index) => (
                 <ProductCardSkeleton key={index} />
               ))}
             </>

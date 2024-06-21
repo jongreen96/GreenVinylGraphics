@@ -19,7 +19,7 @@ export default function ProductsPage() {
         <Suspense
           fallback={
             <>
-              {[...Array(8)].map((_, index) => (
+              {[...Array(10)].map((_, index) => (
                 <ProductCardSkeleton key={index} />
               ))}
             </>

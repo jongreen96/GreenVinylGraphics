@@ -93,6 +93,17 @@ async function ProductsTable() {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent>
+                  <ActiveToggleDropdownItem
+                    id={product.id}
+                    isAvailableForPurchase={product.isAvailableForPurchase}
+                  />
+
+                  <DropdownMenuItem asChild>
+                    <Link href={`/dashboard/products/${product.id}/edit`}>
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+
                   <DropdownMenuItem asChild>
                     <a
                       download
@@ -101,17 +112,6 @@ async function ProductsTable() {
                       Download
                     </a>
                   </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
-                    <Link href={`/dashboard/products/${product.id}/edit`}>
-                      Edit
-                    </Link>
-                  </DropdownMenuItem>
-
-                  <ActiveToggleDropdownItem
-                    id={product.id}
-                    isAvailableForPurchase={product.isAvailableForPurchase}
-                  />
 
                   <DropdownMenuSeparator />
 
