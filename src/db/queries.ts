@@ -1,4 +1,4 @@
-import { and, asc, avg, count, desc, eq, gt, sum } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt, sum } from 'drizzle-orm';
 import { db } from './db';
 import { downloadVerification, order, product, user } from './schema';
 
@@ -234,18 +234,23 @@ export async function getSalesData() {
 
 export async function getUserData() {
   const userCount = await db.select({ userCount: count(user.id) }).from(user);
-  const averageValuePerUser = await db
+
+  const totalValuePerUser = await db
     .select({
-      averageValuePerUser: avg(order.pricePaidInPence),
+      userId: order.userId,
+      totalValuePerUser: sum(order.pricePaidInPence),
     })
-    .from(order);
+    .from(order)
+    .groupBy(order.userId);
+
+  const averageValuePerUser =
+    totalValuePerUser.reduce((sum, u) => Number(u.totalValuePerUser) + sum, 0) /
+    userCount[0].userCount;
 
   return {
     userCount: userCount[0].userCount,
     averageValuePerUser:
-      userCount[0].userCount === 0
-        ? 0
-        : Number(averageValuePerUser[0].averageValuePerUser) / 100,
+      userCount[0].userCount === 0 ? 0 : averageValuePerUser / 100,
   };
 }
 
