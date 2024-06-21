@@ -1,6 +1,6 @@
 TODO:
 
 - Add product page
-- Add metadata
 - Fix download expiry
 - Add Products
+- Improve product tiles on small screens
