@@ -27,24 +27,26 @@ export function ProductCard({
 }: ProductCardProps) {
   return (
     <Card className='flex flex-col overflow-hidden'>
-      <div className='relative w-full aspect-square'>
-        <Image src={imagePath} fill alt={name} className='object-cover' />
-      </div>
+      <Link href={`/products/${id}`}>
+        <div className='relative w-full aspect-square'>
+          <Image src={imagePath} fill alt={name} className='object-cover' />
+        </div>
 
-      <CardHeader className='p-2'>
-        <CardTitle>
-          <div className='flex justify-between w-full gap-2'>
-            <span>{name}</span>
-            <span className='font-normal'>
-              {formatCurrency(priceInPence / 100)}
-            </span>
-          </div>
-        </CardTitle>
+        <CardHeader className='p-2'>
+          <CardTitle>
+            <div className='flex justify-between w-full gap-2'>
+              <span>{name}</span>
+              <span className='font-normal'>
+                {formatCurrency(priceInPence / 100)}
+              </span>
+            </div>
+          </CardTitle>
 
-        <CardDescription className='line-clamp-1'>
-          {description}
-        </CardDescription>
-      </CardHeader>
+          <CardDescription className='line-clamp-1'>
+            {description}
+          </CardDescription>
+        </CardHeader>
+      </Link>
 
       <CardFooter className='mt-auto p-2'>
         <Button asChild className='w-full'>
