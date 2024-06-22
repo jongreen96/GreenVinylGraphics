@@ -14,6 +14,7 @@ import {
 import { getOrders } from '@/db/queries';
 import { formatCurrency } from '@/lib/formatters';
 import { MoreVertical } from 'lucide-react';
+import Link from 'next/link';
 import { PageHeader } from '../_components/pageHeader';
 import { DeleteDropDownItem } from './_components/orderActions';
 
@@ -46,7 +47,11 @@ async function OrderTable() {
       <TableBody>
         {orders.map((order) => (
           <TableRow key={order.id}>
-            <TableCell>{order.product.name}</TableCell>
+            <TableCell>
+              <Link href={`/products/${order.product.id}`}>
+                {order.product.name}
+              </Link>
+            </TableCell>
             <TableCell>{order.user.email}</TableCell>
             <TableCell>
               {formatCurrency(order.pricePaidInPence / 100)}

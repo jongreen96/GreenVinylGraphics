@@ -180,6 +180,7 @@ export async function getOrders() {
     with: {
       product: {
         columns: {
+          id: true,
           name: true,
         },
       },
