@@ -9,6 +9,7 @@ import { getProductData, getSalesData, getUserData } from '@/db/queries';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import AdminSetter from './_components/adminSetter';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -23,6 +24,8 @@ export default async function Dashboard() {
 
   return (
     <main className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+      <AdminSetter />
+
       <Link href='/dashboard/orders'>
         <DashboardCard
           title='Sales'
