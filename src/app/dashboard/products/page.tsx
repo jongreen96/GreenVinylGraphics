@@ -81,7 +81,9 @@ async function ProductsTable() {
               )}
             </TableCell>
 
-            <TableCell>{product.name}</TableCell>
+            <TableCell>
+              <Link href={`/products/${product.id}`}>{product.name}</Link>
+            </TableCell>
             <TableCell>{formatCurrency(product.priceInPence / 100)}</TableCell>
             <TableCell>{formatNumber(product._count)}</TableCell>
 
