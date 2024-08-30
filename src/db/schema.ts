@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 // SCHEMA
-export const product = pgTable('product', {
+export const product = pgTable('gvg_product', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: text('name').notNull(),
   priceInPence: integer('price_in_pence').notNull(),
@@ -23,14 +23,14 @@ export const product = pgTable('product', {
   updatedAt: timestamp('updated_at'),
 });
 
-export const user = pgTable('user', {
+export const user = pgTable('gvg_user', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: text('email').unique().notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at'),
 });
 
-export const order = pgTable('order', {
+export const order = pgTable('gvg_order', {
   id: uuid('id').defaultRandom().primaryKey(),
   pricePaidInPence: integer('price_paid_in_pence').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -44,7 +44,7 @@ export const order = pgTable('order', {
     .notNull(),
 });
 
-export const downloadVerification = pgTable('download_verification', {
+export const downloadVerification = pgTable('gvg_download_verification', {
   id: uuid('id').defaultRandom().primaryKey(),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
