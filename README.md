@@ -1,6 +1,6 @@
 # Green Vinyl Graphics
 
-A grayscale portfolio storefront rebuilt with React 19.3, TanStack Router, shadcn/ui and Tailwind CSS, served by Cloudflare Workers Static Assets.
+A teal-branded portfolio storefront rebuilt with React 19.3, TanStack Router, shadcn/ui and Tailwind CSS, served by Cloudflare Workers Static Assets.
 
 ```sh
 npm install
@@ -14,3 +14,7 @@ The original 52-product catalogue from https://gvg.jongreen.dev is stored in `sr
 React ViewTransition boundaries pair each product image and title between routes. TanStack Router handles navigation; a deferred route view lets React animate page changes while keeping search and filters immediate. Scroll restoration happens inside the transition. Reduced-motion preferences are respected.
 
 The basket persists locally. Checkout creates an in-memory demo confirmation only: there are no payments, accounts, email services, databases or product-file deliveries.
+
+## Production hosting
+
+The production branch is `main`. Cloudflare Workers serves the storefront at https://gvg.jongreen.dev via the custom domain in `wrangler.jsonc`. Run `npm run deploy` after authenticating with `npx wrangler login` to build and publish changes. Git pushes alone do not deploy the Worker unless a separate build integration is configured.
