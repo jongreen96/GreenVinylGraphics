@@ -1,5 +1,7 @@
 import {
   StrictMode,
+  createContext,
+  useContext,
   ViewTransition,
   startTransition,
   useDeferredValue,
@@ -38,6 +40,8 @@ import { BasketProvider, useBasket } from "./store";
 import { BasketDrawer, ProductPreview } from "./components/store-overlays";
 import "./styles.css";
 
+const ProductTransitionContext = createContext(false);
+
 function ProductImage({
   product,
   priority = false,
@@ -49,8 +53,9 @@ function ProductImage({
   large?: boolean;
   thumbnail?: boolean;
 }) {
+  const animate = useContext(ProductTransitionContext);
   return (
-    <ViewTransition name={`image-${product.id}`}>
+    <ViewTransition name={`image-${product.id}`} default={animate ? undefined : "none"}>
       <div className="product-image">
         <img
           src={product.image}
@@ -80,8 +85,9 @@ function ProductTitle({
   product: Product;
   detail?: boolean;
 }) {
+  const animate = useContext(ProductTransitionContext);
   return (
-    <ViewTransition name={`title-${product.id}`}>
+    <ViewTransition name={`title-${product.id}`} default={animate ? undefined : "none"}>
       {detail ? (
         <h1 className="product-title">{product.name}</h1>
       ) : (
@@ -267,18 +273,13 @@ function PageContent() {
   const currentMatch = matches.at(-1);
   const previousMatch = useRef(currentMatch);
   const deferredId = useDeferredValue(currentMatch?.id);
-  const isHomeTemplatesSwap =
-    (previousMatch.current?.routeId === "/" &&
-      currentMatch?.routeId === "/products") ||
-    (previousMatch.current?.routeId === "/products" &&
-      currentMatch?.routeId === "/");
-  // Commit Home ↔ Templates immediately, without a transition snapshot.
-  // Product navigation still defers so its shared images and titles animate.
+  const isProductNavigation =
+    previousMatch.current?.routeId === "/products/$id" ||
+    currentMatch?.routeId === "/products/$id";
+  // Fade regular page changes; share images and titles only for product navigation.
   // Keep typing and filters immediate; only page changes need a snapshot.
   const match =
-    isHomeTemplatesSwap || currentMatch?.id === deferredId
-      ? currentMatch
-      : previousMatch.current;
+    currentMatch?.id === deferredId ? currentMatch : previousMatch.current;
   useLayoutEffect(() => { previousMatch.current = match; }, [match]);
   const positions = useRef(new Map<string, number>());
   useLayoutEffect(() => {
@@ -298,22 +299,28 @@ function PageContent() {
     return () => window.removeEventListener("scroll", save);
   }, [match?.id]);
   if (!match || match.status !== "success") return <NotFound />;
-  switch (match.routeId) {
-    case "/":
-      return <Home />;
-    case "/products":
-      return <Collection search={match.search} />;
-    case "/products/$id":
-      return match.loaderData ? (
-        <ProductPage key={match.id} product={match.loaderData} />
-      ) : <NotFound />;
-    case "/basket":
-      return <Basket />;
-    case "/about":
-      return <About />;
-    default:
-      return <NotFound />;
-  }
+  return (
+    <ProductTransitionContext.Provider value={isProductNavigation}>
+      {(() => {
+          switch (match.routeId) {
+            case "/":
+              return <Home />;
+            case "/products":
+              return <Collection search={match.search} />;
+            case "/products/$id":
+              return match.loaderData ? (
+                <ProductPage key={match.id} product={match.loaderData} />
+              ) : <NotFound />;
+            case "/basket":
+              return <Basket />;
+            case "/about":
+              return <About />;
+            default:
+              return <NotFound />;
+          }
+      })()}
+    </ProductTransitionContext.Provider>
+  );
 }
 
 type CollectionSearch = { category?: string; q?: string; sort?: string };
