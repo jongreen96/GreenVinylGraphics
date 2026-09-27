@@ -700,6 +700,25 @@ function About() {
           We make the templates. You bring the ideas.
         </p>
       </div>
+      <div className="about-story">
+        <div>
+          <p className="eyebrow">GREEN VINYL GRAPHICS · SHEFFIELD, ENGLAND</p>
+          <h2>Built around the details.</h2>
+          <p>Green Vinyl Graphics brings a background in graphic design and signage to digital skin templates. Our templates are designed in-house, with attention to the shapes, cutouts and dimensions that make each device different.</p>
+          <p>The idea is simple: give you a useful starting point for your own artwork. Whether you’re personalising a phone, planning a vinyl project or putting together a mock-up, you can spend more time on the design and less time drawing the outlines.</p>
+        </div>
+        <aside className="about-at-glance" aria-label="The collection at a glance">
+          <Layers size={28} />
+          <h3>A template for your next idea</h3>
+          <dl>
+            <div><dt>In the collection</dt><dd>{products.length} templates</dd></div>
+            <div><dt>Devices & collections</dt><dd>iPhone, iPad, AirPods & more</dd></div>
+            <div><dt>File formats</dt><dd>SVG, AI, PSD, DXF & PNG</dd></div>
+            <div><dt>Product type</dt><dd>Digital files, not physical skins</dd></div>
+          </dl>
+        </aside>
+      </div>
+      <div className="about-section-heading"><p className="eyebrow">FROM FILE TO FINISHED DESIGN</p><h2>How it comes together</h2></div>
       <div className="steps">
         {[
           {
@@ -725,6 +744,36 @@ function About() {
           </article>
         ))}
       </div>
+      <section className="about-formats" aria-labelledby="formats-heading">
+        <div className="about-section-heading"><p className="eyebrow">WORK WITH YOUR FAVOURITE TOOLS</p><h2 id="formats-heading">The right file for your workflow</h2><p>The catalogue includes five file formats, plus a dimensions file to help you check your setup. Choose the format your software supports.</p></div>
+        <div className="format-grid">
+          {[
+            ["SVG", "Scalable outlines", "Vector artwork for compatible design and cutting software. Keep the supplied dimensions when importing."],
+            ["AI", "Illustrator artwork", "Work with the template in Adobe Illustrator and build your artwork around the device outline."],
+            ["PSD", "Photoshop projects", "Use Photoshop to explore colours, textures and artwork in a pixel-based workflow."],
+            ["DXF", "Cutting workflows", "An option for software that accepts DXF. Check your application’s import settings and scale."],
+            ["PNG", "Image previews", "Useful for visual layouts and mock-ups. PNG is a raster image, rather than a vector cutting path."],
+          ].map(([format, title, description]) => <article key={format}><span>{format}</span><h3>{title}</h3><p>{description}</p></article>)}
+        </div>
+      </section>
+      <section className="about-preparation" aria-labelledby="preparation-heading">
+        <div><p className="eyebrow">A LITTLE PREPARATION GOES A LONG WAY</p><h2 id="preparation-heading">Before your first cut</h2><p>A good result starts with the right model, the right scale and a small test.</p></div>
+        <ul>
+          <li><Check size={18} /><div><h3>Match the exact device</h3><p>Check the model, size and generation. Devices with similar names can have different dimensions and camera layouts.</p></div></li>
+          <li><Check size={18} /><div><h3>Check the imported dimensions</h3><p>Use the dimensions file as your reference. Design software can change the scale when it opens or imports a file.</p></div></li>
+          <li><Check size={18} /><div><h3>Test your material and settings</h3><p>Make a test cut before committing to your final vinyl. Thin, high-quality vinyl can help with curved surfaces; blade and material settings depend on your equipment.</p></div></li>
+        </ul>
+      </section>
+      <section className="about-faq" aria-labelledby="faq-heading">
+        <div className="about-section-heading"><p className="eyebrow">GOOD TO KNOW</p><h2 id="faq-heading">A few common questions</h2></div>
+        {[
+          ["Am I buying a physical skin?", "No. These are digital templates for creating your own designs and skins. A device, vinyl, cutting equipment and a finished physical skin are not included."],
+          ["Will the files work with my software?", "Check which formats your software and edition can import before choosing a template. The catalogue offers SVG, AI, PSD, DXF and PNG, but support and import behaviour vary between applications."],
+          ["What are the bundles?", "Bundles group multiple templates into one product. Check the product’s listed models and preview to make sure the bundle covers the devices you need."],
+          ["Can I share or resell the template files?", "Redistributing or reselling the Green Vinyl Graphics template files is not permitted. Keep the source files for your own use and check the applicable licence before any other use."],
+          ["Can I purchase and download files on this site?", "This version of the shop is a portfolio demo. You can browse templates, add them to your bag and try the demo checkout. No payment is taken and no template files are delivered."],
+        ].map(([question, answer]) => <details key={question}><summary>{question}<Plus size={18} /></summary><p>{answer}</p></details>)}
+      </section>
       <div className="about-note">
         <Layers size={30} />
         <div>

@@ -1622,3 +1622,58 @@ html {
   .store-services strong { font-size: 10px; }
   .store-services small { font-size: 9px; }
 }
+
+/* About: studio background, file guidance and practical questions. */
+.about-page .eyebrow { color: var(--accent-dark); }
+.about-story { display: grid; grid-template-columns: 1.2fr 1fr; gap: 70px; align-items: start; margin-bottom: 64px; }
+.about-story h2 { margin: 12px 0 22px; }
+.about-story p:not(.eyebrow), .about-section-heading > p:not(.eyebrow), .about-preparation p { font-size: 14px; line-height: 1.85; color: #62716c; }
+.about-story p + p { margin-top: 16px; }
+.about-at-glance { padding: 32px; border-radius: 12px; background: var(--accent-soft); }
+.about-at-glance > svg { color: var(--accent-dark); margin-bottom: 18px; }
+.about-at-glance h3 { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+.about-at-glance dl > div { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-top: 1px solid #cee4df; font-size: 12px; }
+.about-at-glance dt { color: #62716c; }
+.about-at-glance dd { text-align: right; font-weight: 500; }
+.about-section-heading { margin-bottom: 26px; }
+.about-section-heading h2 { margin-top: 10px; }
+.about-section-heading > p:not(.eyebrow) { max-width: 660px; margin-top: 18px; }
+.about-page .steps article > span { color: var(--accent-dark); font-weight: 600; }
+.about-page .steps h2 { margin-top: 22px; }
+.about-formats { padding-block: 20px 60px; }
+.format-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+.format-grid article { border: 1px solid #dde9e5; border-radius: 10px; padding: 22px; }
+.format-grid article > span { display: inline-block; color: var(--accent-dark); background: var(--accent-soft); border-radius: 5px; padding: 7px 10px; font-size: 12px; font-weight: 700; }
+.format-grid h3 { font-size: 14px; font-weight: 600; margin: 20px 0 10px; }
+.format-grid p { font-size: 12px; line-height: 1.8; color: #62716c; }
+.about-preparation { display: grid; grid-template-columns: 1fr 1.3fr; gap: 65px; padding: 38px; background: #f5f9f7; border-radius: 12px; }
+.about-preparation h2 { margin: 12px 0 18px; }
+.about-preparation ul { display: grid; gap: 24px; }
+.about-preparation li { display: flex; gap: 14px; }
+.about-preparation li > svg { flex-shrink: 0; color: var(--accent-dark); margin-top: 3px; }
+.about-preparation h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.about-faq { padding-block: 60px; max-width: 920px; }
+.about-faq details { border-bottom: 1px solid #dde9e5; }
+.about-faq summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 21px 0; font-size: 15px; font-weight: 500; list-style: none; }
+.about-faq summary::-webkit-details-marker { display: none; }
+.about-faq summary svg { color: var(--accent-dark); flex-shrink: 0; }
+.about-faq details[open] summary svg { transform: rotate(45deg); }
+.about-faq details > p { font-size: 14px; line-height: 1.85; color: #62716c; padding: 0 36px 24px 0; }
+.about-page .about-note { background: var(--accent-soft); border-radius: 12px; }
+.about-page .about-note > svg { color: var(--accent-dark); }
+@media (max-width: 1000px) {
+  .about-story { gap: 32px; }
+  .format-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .about-preparation { gap: 30px; padding: 28px; }
+}
+@media (max-width: 600px) {
+  .about-page .page-heading { padding-bottom: 36px; }
+  .about-story, .about-preparation { grid-template-columns: 1fr; gap: 28px; }
+  .about-story { margin-bottom: 40px; }
+  .about-at-glance, .about-preparation { padding: 22px; }
+  .format-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .format-grid article { padding: 16px; }
+  .about-formats { padding-bottom: 36px; }
+  .about-faq { padding-block: 40px; }
+  .about-page .about-note { padding: 24px; gap: 18px; }
+}
