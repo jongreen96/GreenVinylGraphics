@@ -143,16 +143,10 @@ function Layout() {
       </div>
       <header className="site-header wrap">
         <Link to="/" className="brand" aria-label="Green Vinyl Graphics home">
-          <span className="brand-mark">
-            gvg<span>®</span>
-          </span>
-          <span className="brand-name">
-            GREEN VINYL
-            <br />
-            GRAPHICS
-          </span>
+          <img className="brand-logo" src="/images/gvg-logo.png" alt="Green Vinyl Graphics" width="471" height="195" />
         </Link>
         <nav aria-label="Main navigation">
+          <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "active" }}>Home</Link>
           <Link to="/products" activeProps={{ className: "active" }}>
             Templates
           </Link>
@@ -214,105 +208,55 @@ function Layout() {
 }
 function Home() {
   const hero = products.find((p) => p.name === "iPhone 13 Pro")!;
+  const bundle = products.find((p) => p.name === "All iPhone Bundle")!;
+  const picks = [...featured, ...products.filter((p) =>
+    ["iPhone 14 Pro Max", "MagSafe Charger", "iPhone 13 Mini", "iPad Mini 6th Gen (2021)"].includes(p.name))];
   return (
-    <>
-      <section className="hero wrap">
-        <div className="hero-copy">
-          <p className="eyebrow">
-            <span className="status-dot" /> DIGITAL SKIN TEMPLATES
-          </p>
-          <h1>
-            Your device.
-            <br />
-            Your design.
-            <br />
-            <span>Your next idea.</span>
-          </h1>
-          <p className="hero-description">
-            The starting point for something uniquely yours.
-            <br className="desktop-break" /> Precise digital templates. Ready to
-            make your mark.
-          </p>
-          <Button asChild>
-            <Link to="/products">
-              Explore the collection <ArrowUpRight />
-            </Link>
-          </Button>
-          <div className="hero-footnote">
-            <span>01 — DESIGNED TO FIT</span>
-            <span>02 — MADE TO CREATE</span>
+    <div className="storefront">
+      <section className="store-hero">
+        <div className="wrap store-hero-inner">
+          <div className="store-hero-copy">
+            <span className="store-kicker"><span /> Made for your next creation</span>
+            <h1>A fresh look.<br />A perfect fit.</h1>
+            <p>Make it yours with precision-cut skin templates for the devices you love.</p>
+            <Button asChild><Link to="/products">Shop templates <ArrowRight /></Link></Button>
+            <div className="store-hero-note"><Download size={16} /> Digital files. Ready when you are.</div>
           </div>
-        </div>
-        <Link
-          to="/products/$id"
-          params={{ id: hero.id }}
-          className="hero-art"
-          aria-label={`Explore ${hero.name}`}
-        >
-          <div className="art-top">
-            <span>THE EVERYDAY, REIMAGINED</span>
-            <Plus size={20} />
-          </div>
-          <div className="hero-product">
+          <Link to="/products/$id" params={{ id: hero.id }} className="store-hero-art" aria-label={`View ${hero.name}`}>
+            <div className="store-orbit" />
             <ProductImage product={hero} priority large />
-          </div>
-          <div className="art-bottom">
-            <div>
-              <p className="eyebrow">A BLANK CANVAS FOR YOUR IDEAS</p>
-              <ProductTitle product={hero} />
-            </div>
-            <span className="round-arrow">
-              <ArrowUpRight />
-            </span>
-          </div>
-        </Link>
+            <span className="store-price-bubble">Template only<strong>{money(hero.price)}</strong></span>
+            <div className="store-hero-caption"><span>IN THE SPOTLIGHT</span><ProductTitle product={hero} /><ArrowUpRight size={20} /></div>
+          </Link>
+        </div>
       </section>
-      <div className="benefits wrap">
-        <span>
-          <Download /> Digital files, ready to create
-        </span>
-        <span>
-          <Layers /> SVG · AI · PSD · DXF · PNG
-        </span>
-        <span>
-          <Check /> Made for your favourite tools
-        </span>
+      <section className="store-categories wrap">
+        <div className="section-heading"><div><p className="eyebrow">Find your device</p><h2>Shop by category</h2></div><Link to="/products" className="text-link">Browse all <ArrowRight size={16} /></Link></div>
+        <div className="category-grid">
+          {categories.filter((c) => c !== "All templates").map((category) => {
+            const items = products.filter((p) => p.category === category);
+            return <Link key={category} to="/products" search={{ category }} className="category-tile">
+              <img src={items[0].image.replace(".webp", "-small.webp")} alt="" width="120" height="120" loading="lazy" />
+              <strong>{category}</strong><span>{items.length} templates</span>
+            </Link>;
+          })}
+        </div>
+      </section>
+      <section className="store-promo wrap">
+        <div><p className="eyebrow">More devices. More possibilities.</p><h2>Your whole collection.<br />One handy bundle.</h2><p>More iPhone templates, together in one collection.</p><Button asChild><Link to="/products/$id" params={{ id: bundle.id }}>Explore the bundle <ArrowRight /></Link></Button></div>
+        <Link to="/products/$id" params={{ id: bundle.id }} className="store-promo-art" aria-label="View All iPhone Bundle"><ProductImage product={bundle} /><span className="bundle-price">All iPhone Bundle <strong>{money(bundle.price)}</strong></span></Link>
+      </section>
+      <section className="store-products wrap">
+        <div className="section-heading"><div><p className="eyebrow">A little inspiration</p><h2>Find your next template</h2></div><Link to="/products" className="text-link">View all templates <ArrowRight size={16} /></Link></div>
+        <div className="product-grid">{picks.map((product, index) => <ProductCard key={product.id} product={product} index={index} />)}</div>
+      </section>
+      <div className="store-services wrap">
+        <div><Download /><span><strong>Digital downloads</strong><small>Get straight to creating</small></span></div>
+        <div><Layers /><span><strong>Five file formats</strong><small>SVG · AI · PSD · DXF · PNG</small></span></div>
+        <div><Check /><span><strong>Designed to fit</strong><small>Made for your device</small></span></div>
+        <Link to="/about"><ArrowUpRight /><span><strong>Made in Sheffield</strong><small>Get to know GVG</small></span></Link>
       </div>
-      <section className="collection wrap">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">THE EDIT</p>
-            <h2>A few good starting points.</h2>
-          </div>
-          <Link to="/products" className="text-link">
-            All {products.length} templates <ArrowUpRight size={18} />
-          </Link>
-        </div>
-        <div className="product-grid featured">
-          {featured.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
-        </div>
-      </section>
-      <section className="make-banner wrap">
-        <span className="outline-star" aria-hidden="true">
-          ✳
-        </span>
-        <div>
-          <p className="eyebrow">LESS SETUP. MORE MAKING.</p>
-          <h2>
-            We did the outlines.
-            <br />
-            You do the original.
-          </h2>
-        </div>
-        <Button asChild variant="outline">
-          <Link to="/about">
-            How it works <ArrowUpRight />
-          </Link>
-        </Button>
-      </section>
-    </>
+    </div>
   );
 }
 
