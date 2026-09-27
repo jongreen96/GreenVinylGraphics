@@ -777,7 +777,7 @@ details p {
   white-space: nowrap;
 }
 .order-summary {
-  background: #eee;
+  background: transparent;
   padding: 30px;
 }
 .order-summary h2 {
