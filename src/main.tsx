@@ -466,9 +466,7 @@ function ProductPage({ product }: { product: Product }) {
             {money(product.price)} <span>GBP</span>
           </p>
           <p className="product-intro">
-            A precise starting point for your{" "}
-            {product.name.replace(" Bundle", "")}. Add your artwork, choose your
-            finish, and make something that's entirely yours.
+            {product.summary}
           </p>
           <div className="format-tags">
             {["SVG", "AI", "PSD", "DXF", "PNG"].map((f) => (
