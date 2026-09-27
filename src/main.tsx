@@ -323,9 +323,18 @@ function PageContent() {
   const currentMatch = matches.at(-1);
   const previousMatch = useRef(currentMatch);
   const deferredId = useDeferredValue(currentMatch?.id);
+  const isHomeTemplatesSwap =
+    (previousMatch.current?.routeId === "/" &&
+      currentMatch?.routeId === "/products") ||
+    (previousMatch.current?.routeId === "/products" &&
+      currentMatch?.routeId === "/");
+  // Commit Home ↔ Templates immediately, without a transition snapshot.
+  // Product navigation still defers so its shared images and titles animate.
   // Keep typing and filters immediate; only page changes need a snapshot.
   const match =
-    currentMatch?.id === deferredId ? currentMatch : previousMatch.current;
+    isHomeTemplatesSwap || currentMatch?.id === deferredId
+      ? currentMatch
+      : previousMatch.current;
   useLayoutEffect(() => { previousMatch.current = match; }, [match]);
   const positions = useRef(new Map<string, number>());
   useLayoutEffect(() => {
