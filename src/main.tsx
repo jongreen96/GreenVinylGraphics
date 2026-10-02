@@ -182,7 +182,7 @@ function Layout() {
           <Link to="/" className="footer-wordmark">
             Good things
             <br />
-            start with a template<span>↗</span>
+            start with a template
           </Link>
           <div>
             <p className="eyebrow">GREEN VINYL GRAPHICS</p>
